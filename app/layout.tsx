@@ -19,8 +19,8 @@ export const metadata: Metadata = {
   title: "DevNet - Chat",
   description: "AI Chat Workspace & Conversation Manager",
   icons: {
-    icon: "/devchat.png",
-    apple: "/devchat.png",
+    icon: "/devchat.svg",
+    apple: "/devchat.svg",
   },
 };
 

@@ -243,7 +243,7 @@ function SidebarPanel({ user, chats = [], isCollapsed = false }: ChatSidebarProp
   };
 
   return (
-    <div className="flex h-full min-h-0 flex-col bg-sidebar/90 text-sidebar-foreground">
+    <div className="flex h-full min-h-0 w-full flex-col overflow-hidden bg-sidebar/90 text-sidebar-foreground">
       <div
         className={cn(
           "border-b border-sidebar-border/70 py-3.5",
@@ -319,9 +319,9 @@ function SidebarPanel({ user, chats = [], isCollapsed = false }: ChatSidebarProp
           </div>
 
           <div className="border-t border-sidebar-border/70 p-3 lg:p-4">
-            <div className="flex items-center gap-3 rounded-2xl border border-sidebar-border/70 bg-background/70 px-3 py-3 shadow-sm">
+            <div className="flex min-w-0 items-center gap-3 rounded-2xl border border-sidebar-border/70 bg-background/70 px-3 py-3 shadow-sm">
               <UserButton user={user ?? null} />
-              <span className="flex-1 truncate text-sm text-sidebar-foreground">
+              <span className="min-w-0 flex-1 truncate text-sm text-sidebar-foreground">
                 {user?.email}
               </span>
             </div>
@@ -346,7 +346,7 @@ const ChatSidebar = (props: ChatSidebarProps) => {
     <>
       <aside
         className={cn(
-          "hidden h-full shrink-0 border-r border-border/60 bg-sidebar/90 backdrop-blur-xl transition-[width] duration-300 ease-out md:flex",
+          "hidden h-full shrink-0 border-r border-border/60 bg-sidebar/90 backdrop-blur-xl transition-[width] duration-300 ease-out md:flex overflow-hidden",
           isCollapsed ? "w-[4.5rem]" : "w-[15rem] lg:w-[15.5rem] xl:w-[16rem]",
         )}
       >
@@ -364,7 +364,7 @@ const ChatSidebar = (props: ChatSidebarProps) => {
           <DrawerContent
             className="w-[84vw] max-w-sm border-r-0 p-0"
           >
-            <SidebarPanel {...props} />
+            <SidebarPanel {...props} isCollapsed={false} />
           </DrawerContent>
         </Drawer>
       </div>

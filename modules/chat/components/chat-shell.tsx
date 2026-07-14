@@ -36,7 +36,7 @@ const ChatShell = ({ user, chats, children }: ChatShellProps) => {
 
   return (
     <div className="h-dvh p-0 md:p-3 lg:p-4">
-      <div className="mx-auto grid h-full w-full max-w-[1600px] grid-cols-[auto_minmax(0,1fr)] overflow-hidden bg-background/80 backdrop-blur-xl md:rounded-[1.75rem] md:border md:border-border/60 md:shadow-[0_24px_80px_rgba(0,0,0,0.14)]">
+      <div className="mx-auto flex h-full w-full max-w-[1600px] overflow-hidden bg-background/80 backdrop-blur-xl md:rounded-[1.75rem] md:border md:border-border/60 md:shadow-[0_24px_80px_rgba(0,0,0,0.14)]">
         <ChatSidebar
           chats={chats}
           isCollapsed={isSidebarCollapsed}

@@ -13,7 +13,7 @@ type HeaderProps = {
 const Header = ({ isSidebarCollapsed, onToggleSidebar }: HeaderProps) => {
   return (
     <header className="sticky top-0 z-20 border-b border-border/60 bg-background/75 backdrop-blur-xl">
-      <div className="flex h-14 items-center justify-between gap-3 px-4 sm:px-5 lg:h-16 lg:px-6">
+      <div className="flex h-14 items-center justify-between gap-3 pl-16 pr-4 sm:pr-5 md:px-4 lg:h-16 lg:px-6">
         <div className="flex min-w-0 items-center gap-3">
           <Button
             aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
