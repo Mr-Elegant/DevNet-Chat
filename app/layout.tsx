@@ -26,19 +26,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html suppressHydrationWarning
+    <html
+      suppressHydrationWarning
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-dvh bg-background text-foreground">
         <QueryProvider>
-            <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-            >
-            {children}
+            <ThemeProvider defaultTheme="system">
+            <div className="relative min-h-dvh overflow-x-hidden bg-[radial-gradient(circle_at_top_left,_var(--color-muted)_0%,_transparent_35%),radial-gradient(circle_at_top_right,_var(--color-accent)_0%,_transparent_30%)] dark:bg-[radial-gradient(circle_at_top_left,_color-mix(in_oklch,var(--color-primary)_12%,transparent)_0%,_transparent_35%),radial-gradient(circle_at_top_right,_color-mix(in_oklch,var(--color-primary)_10%,transparent)_0%,_transparent_28%)]">
+              {children}
+            </div>
             <Toaster />
           </ThemeProvider>
         </QueryProvider>

@@ -19,11 +19,9 @@ import {
 import {
   Conversation,
   ConversationContent,
-  ConversationDownload,
   ConversationEmptyState,
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
-import { RotateCcwIcon, StopCircleIcon } from "lucide-react";
 import ModelSelector from "../chat-view/model-selector";
 import {
   Message,
@@ -36,7 +34,6 @@ import {
   ReasoningTrigger,
 } from "@/components/ai-elements/reasoning";
 import { toast } from "sonner";
-import { isModelId } from "tokenlens";
 
 function parseMessageToUI(msg) {
   const basePart = { type: "text", text: msg.content };
@@ -219,49 +216,74 @@ const ChatView = ({chatId, initialMessages, initialModel}: {chatId: string, init
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-6 relative size-full h-[calc(100vh-4rem)]">
-      <div className="flex flex-col h-full">
-        <Conversation className="h-full">
-          <ConversationContent>
-            {messages.length === 0 ? (
-              <ConversationEmptyState title="Start the conversation" description="Send a message to get started" />
-            ) : (
-              messages.map((message) => (
-                <Fragment key={message.id}>
-                  {message.parts.map((part, i) => (
-                    <MessagePart
-                      key={`${message.id}-${i}`}
-                      part={part as MessagePartShape}
-                      messageId={message.id}
-                      partIndex={i}
-                      role={message.role}
-                      isStreaming={
-                        isBuzy && messages.at(-1) && i === message.parts.length - 1
-                      }
-                    />
-                  ))}
-                </Fragment>
-              ))
-            )}
-            {status === "submitted" && (
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Spinner />
-                <span className="text-sm">AI is thinking...</span>
+    <div className="relative h-[calc(100dvh-4rem)] px-4 py-4 sm:px-6 lg:px-8">
+      <div className="mx-auto flex h-full w-full max-w-6xl flex-col gap-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-[1.75rem] border border-border/70 bg-background/75 px-4 py-3 shadow-lg backdrop-blur-xl">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground">
+              Conversation
+            </p>
+            <h2 className="truncate text-base font-semibold text-foreground sm:text-lg">
+              {selectedModel || initialModel || "Select a model to begin"}
+            </h2>
+          </div>
+
+          <div className="flex items-center gap-2">
+            {isBuzy && (
+              <div className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-muted/40 px-3 py-1 text-sm text-muted-foreground">
+                <Spinner className="h-4 w-4" />
+                <span>Generating</span>
               </div>
             )}
+          </div>
+        </div>
 
-            {error && (
-              <div className="text-sm text-destructive">
-                 {error.message || "Something went wrong"} 
-              </div>
-            )}
+        <div className="relative flex min-h-0 flex-1 overflow-hidden rounded-[1.75rem] border border-border/70 bg-background/75 shadow-[0_20px_50px_rgba(0,0,0,0.08)] backdrop-blur-xl">
+          <Conversation className="h-full">
+            <ConversationContent className="px-4 py-6 sm:px-6 sm:py-8">
+              {messages.length === 0 ? (
+                <ConversationEmptyState
+                  title="Start the conversation"
+                  description="Send a message to get started"
+                  className="rounded-[1.5rem] border border-dashed border-border/70 bg-background/60"
+                />
+              ) : (
+                messages.map((message) => (
+                  <Fragment key={message.id}>
+                    {message.parts.map((part, i) => (
+                      <MessagePart
+                        key={`${message.id}-${i}`}
+                        part={part as MessagePartShape}
+                        messageId={message.id}
+                        partIndex={i}
+                        role={message.role}
+                        isStreaming={
+                          isBuzy && messages.at(-1) && i === message.parts.length - 1
+                        }
+                      />
+                    ))}
+                  </Fragment>
+                ))
+              )}
 
+              {status === "submitted" && (
+                <div className="flex items-center gap-2 rounded-2xl border border-border/70 bg-muted/40 px-4 py-3 text-muted-foreground">
+                  <Spinner />
+                  <span className="text-sm">AI is thinking...</span>
+                </div>
+              )}
 
-          </ConversationContent>
-          <ConversationScrollButton />
-        </Conversation>
+              {error && (
+                <div className="rounded-2xl border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+                  {error.message || "Something went wrong"}
+                </div>
+              )}
+            </ConversationContent>
+            <ConversationScrollButton />
+          </Conversation>
+        </div>
 
-        <PromptInput onSubmit={handleSubmit} className="mt-4">
+        <PromptInput onSubmit={handleSubmit} className="mt-0">
           <PromptInputBody>
             <PromptInputTextarea
               placeholder="Type your message..."
@@ -269,9 +291,8 @@ const ChatView = ({chatId, initialMessages, initialModel}: {chatId: string, init
             />
           </PromptInputBody>
 
-
           <PromptInputFooter>
-            <PromptInputTools className="flex items-center justify-between gap-2 w-full">
+            <PromptInputTools className="flex w-full items-center justify-between gap-2">
               <div className="flex-1">
                 {isModelLoading ? (
                   <Spinner />
@@ -285,7 +306,7 @@ const ChatView = ({chatId, initialMessages, initialModel}: {chatId: string, init
                 )}
               </div>
 
-               <PromptInputSubmit status={status} onStop={stop}  />   
+              <PromptInputSubmit status={status} onStop={stop} />
             </PromptInputTools>
           </PromptInputFooter>
         </PromptInput>

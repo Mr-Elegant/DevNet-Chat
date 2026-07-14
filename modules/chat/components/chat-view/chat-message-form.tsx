@@ -1,5 +1,6 @@
 "use client";
 
+import { motion } from "motion/react";
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -49,14 +50,20 @@ const ChatMessageForm = ({ message, onMessageChange }: ChatMessageFormProps) => 
   };
 
   return (
-    <div className="w-full max-w-3xl mx-auto px-4 pb-6">
+    <motion.div
+      className="w-full px-0"
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.2, ease: "easeOut" }}
+    >
       <form onSubmit={handleSubmit} className="relative">
-        <div className="relative rounded-2xl border border-border shadow-sm transition-all">
+        <div className="relative overflow-hidden rounded-3xl border border-border/70 bg-background/80 shadow-[0_16px_40px_rgba(0,0,0,0.08)] backdrop-blur">
+          <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
           <Textarea
             value={message}
             onChange={handleChange}
             placeholder="Type your message here..."
-            className="min-h-[60px] max-h-[200px] resize-none border-0 bg-transparent px-4 py-3 text-base focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="min-h-[84px] max-h-[220px] resize-none border-0 bg-transparent px-5 py-4 text-base leading-7 focus-visible:ring-0 focus-visible:ring-offset-0"
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
@@ -65,7 +72,7 @@ const ChatMessageForm = ({ message, onMessageChange }: ChatMessageFormProps) => 
             }}
           />
 
-          <div className="flex items-center justify-between gap-2 border-t px-3 py-2">
+          <div className="flex flex-col gap-3 border-t border-border/70 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-1">
               {isPending ? (
                 <Spinner />
@@ -74,35 +81,37 @@ const ChatMessageForm = ({ message, onMessageChange }: ChatMessageFormProps) => 
                   models={modelList}
                   selectedModelId={activeModelId}
                   onModelSelect={setSelectedModel}
-                  className="ml-1"
+                  className="ml-0"
                 />
               )}
             </div>
 
-            <Button
-              type="submit"
-              disabled={!message.trim()}
-              size="sm"
-              variant={message.trim() ? "default" : "ghost"}
-              className="h-8 w-8 rounded-full p-0"
-              aria-label="Send message"
-              title={
-                message.trim() ? "Send message" : "Enter a message to enable"
-              }
-            >
-              {isChatPending ? (
-                <Spinner className="h-4 w-4" />
-              ) : (
-                <>
-                  <Send className="h-4 w-4" />
-                  <span className="sr-only">Send message</span>
-                </>
-              )}
-            </Button>
+            <motion.div whileHover={{ scale: 1.04 }} whileTap={{ scale: 0.96 }}>
+              <Button
+                type="submit"
+                disabled={!message.trim()}
+                size="sm"
+                variant={message.trim() ? "default" : "ghost"}
+                className="h-10 w-10 rounded-full p-0 shadow-sm"
+                aria-label="Send message"
+                title={
+                  message.trim() ? "Send message" : "Enter a message to enable"
+                }
+              >
+                {isChatPending ? (
+                  <Spinner className="h-4 w-4" />
+                ) : (
+                  <>
+                    <Send className="h-4 w-4" />
+                    <span className="sr-only">Send message</span>
+                  </>
+                )}
+              </Button>
+            </motion.div>
           </div>
         </div>
       </form>
-    </div>
+    </motion.div>
   );
 };
 

@@ -1,25 +1,24 @@
 "use client"
 
-import * as React from "react"
-import { Moon, Sun, Sunrise, Sunset } from "lucide-react"
-import { useTheme } from "next-themes"
+import { MoonStar, SunMedium } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+import { useTheme } from "@/components/providers/theme-provider"
 
 export function ModeToggle() {
-  const { setTheme , theme} = useTheme()
+  const { setTheme, theme } = useTheme()
+  const isDark = theme === "dark"
 
   return (
- <Button variant="ghost" size="icon" onClick={() => setTheme(theme === "light" ? "dark" : "light")}>
-    {
-        theme === "light" ? <Sunset className="size-5"/> : <Sunrise size={"size-5"} />
-    }
- </Button>
+    <Button
+      variant="outline"
+      size="icon"
+      onClick={() => setTheme(isDark ? "light" : "dark")}
+      className="rounded-full border-border/70 bg-background/70 shadow-sm backdrop-blur"
+      aria-label="Toggle theme"
+      title={isDark ? "Switch to light mode" : "Switch to dark mode"}
+    >
+      {isDark ? <SunMedium className="size-4" /> : <MoonStar className="size-4" />}
+    </Button>
   )
 }
