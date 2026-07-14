@@ -63,7 +63,7 @@ const ChatMessageForm = ({ message, onMessageChange }: ChatMessageFormProps) => 
             value={message}
             onChange={handleChange}
             placeholder="Type your message here..."
-            className="min-h-[84px] max-h-[220px] resize-none border-0 bg-transparent px-5 py-4 text-base leading-7 focus-visible:ring-0 focus-visible:ring-offset-0"
+            className="min-h-[76px] max-h-[200px] resize-none border-0 bg-transparent px-4 py-3.5 text-sm leading-6 focus-visible:ring-0 focus-visible:ring-offset-0 sm:px-5 sm:py-4 sm:text-base sm:leading-7"
             onKeyDown={(e) => {
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
@@ -92,7 +92,7 @@ const ChatMessageForm = ({ message, onMessageChange }: ChatMessageFormProps) => 
                 disabled={!message.trim()}
                 size="sm"
                 variant={message.trim() ? "default" : "ghost"}
-                className="h-10 w-10 rounded-full p-0 shadow-sm"
+                className="h-9 w-9 rounded-full p-0 shadow-sm"
                 aria-label="Send message"
                 title={
                   message.trim() ? "Send message" : "Enter a message to enable"

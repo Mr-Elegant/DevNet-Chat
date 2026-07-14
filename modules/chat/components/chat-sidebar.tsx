@@ -15,6 +15,7 @@ import {
 import { AnimatePresence, motion } from "motion/react";
 
 import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -48,6 +49,7 @@ type ChatGroups = {
 type ChatSidebarProps = {
   user?: CurrentUser | null;
   chats?: Chat[];
+  isCollapsed?: boolean;
 };
 
 function groupChatsByDate(chats: Chat[]) {
@@ -178,7 +180,7 @@ function ChatGroup({ label, chats, activeChatId, onDelete }: ChatGroupProps) {
   );
 }
 
-function SidebarPanel({ user, chats = [] }: ChatSidebarProps) {
+function SidebarPanel({ user, chats = [], isCollapsed = false }: ChatSidebarProps) {
   const pathname = usePathname();
   const activeChatId = pathname?.startsWith("/chat/")
     ? pathname.split("/")[2]
@@ -242,75 +244,90 @@ function SidebarPanel({ user, chats = [] }: ChatSidebarProps) {
 
   return (
     <div className="flex h-full min-h-0 flex-col bg-sidebar/90 text-sidebar-foreground">
-      <div className="flex items-center gap-3 border-b border-sidebar-border/70 px-4 py-4">
-        <div className="flex h-11 w-11 items-center justify-center rounded-2xl border border-sidebar-border/70 bg-background/70 shadow-sm">
+      <div
+        className={cn(
+          "border-b border-sidebar-border/70 py-3.5",
+          isCollapsed ? "flex flex-col items-center gap-2 px-2" : "flex items-center gap-3 px-3 lg:px-4",
+        )}
+      >
+        <div className="flex h-10 w-10 items-center justify-center rounded-2xl border border-sidebar-border/70 bg-background/70 shadow-sm">
           <Image src="/devchat.svg" alt="logo" width={28} height={28} />
         </div>
-        <div className="min-w-0">
-          <p className="truncate text-sm font-semibold">DevChat</p>
-          <p className="truncate text-xs text-sidebar-foreground/70">
-            Fast, focused AI threads
-          </p>
-        </div>
-      </div>
-
-      <div className="p-4">
-        <Link
-          href="/"
-          className="flex h-11 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-transform transition-colors hover:-translate-y-0.5 hover:bg-primary/90"
-        >
-          <PlusIcon className="h-4 w-4" />
-          <span>New Chat</span>
-        </Link>
-      </div>
-
-      <div className="px-4 pb-4">
-        <div className="relative">
-          <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-sidebar-foreground/50" />
-          <Input
-            placeholder="Search your threads..."
-            className="h-11 rounded-xl border-sidebar-border/70 bg-background/70 pr-8 pl-9 shadow-sm backdrop-blur"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={() => setSearchQuery("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-sidebar-foreground/50 hover:text-sidebar-foreground"
-            >
-              x
-            </button>
-          )}
-        </div>
-      </div>
-
-      <div className="flex-1 overflow-y-auto px-2 pb-4">
-        {filteredChats.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-sidebar-border/70 px-4 py-8 text-center text-sm text-sidebar-foreground/60">
-            {searchQuery ? "No chats found" : "No chats yet"}
+        {!isCollapsed && (
+          <div className="min-w-0">
+            <p className="truncate text-sm font-semibold lg:text-[0.95rem]">DevChat</p>
+            <p className="truncate text-[11px] text-sidebar-foreground/70 lg:text-xs">
+              Fast, focused AI threads
+            </p>
           </div>
-        ) : (
-          DATE_GROUP.map((group) => (
-            <ChatGroup
-              key={group.key}
-              label={group.label}
-              chats={groupedChats[group.key]}
-              activeChatId={activeChatId}
-              onDelete={handleDeleteRequest}
-            />
-          ))
         )}
       </div>
 
-      <div className="border-t border-sidebar-border/70 p-4">
-        <div className="flex items-center gap-3 rounded-2xl border border-sidebar-border/70 bg-background/70 px-3 py-3 shadow-sm">
-          <UserButton user={user ?? null} />
-          <span className="flex-1 truncate text-sm text-sidebar-foreground">
-            {user?.email}
-          </span>
-        </div>
+      <div className={cn("p-3 lg:p-4", isCollapsed && "px-2")}>
+        <Link
+          href="/"
+          className={cn(
+            "flex h-10 w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 text-sm font-medium text-primary-foreground shadow-sm transition-transform transition-colors hover:-translate-y-0.5 hover:bg-primary/90",
+            isCollapsed && "px-0",
+          )}
+          aria-label="New Chat"
+        >
+          <PlusIcon className="h-4 w-4" />
+          {!isCollapsed && <span>New Chat</span>}
+        </Link>
       </div>
+
+      {!isCollapsed && (
+        <>
+          <div className="px-3 pb-3 lg:px-4 lg:pb-4">
+            <div className="relative">
+              <SearchIcon className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-sidebar-foreground/50" />
+              <Input
+                placeholder="Search your threads..."
+                className="h-10 rounded-xl border-sidebar-border/70 bg-background/70 pr-8 pl-9 text-sm shadow-sm backdrop-blur"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery("")}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-sidebar-foreground/50 hover:text-sidebar-foreground"
+                >
+                  x
+                </button>
+              )}
+            </div>
+          </div>
+
+          <div className="flex-1 overflow-y-auto px-2 pb-3 lg:pb-4">
+            {filteredChats.length === 0 ? (
+              <div className="rounded-2xl border border-dashed border-sidebar-border/70 px-4 py-7 text-center text-sm text-sidebar-foreground/60">
+                {searchQuery ? "No chats found" : "No chats yet"}
+              </div>
+            ) : (
+              DATE_GROUP.map((group) => (
+                <ChatGroup
+                  key={group.key}
+                  label={group.label}
+                  chats={groupedChats[group.key]}
+                  activeChatId={activeChatId}
+                  onDelete={handleDeleteRequest}
+                />
+              ))
+            )}
+          </div>
+
+          <div className="border-t border-sidebar-border/70 p-3 lg:p-4">
+            <div className="flex items-center gap-3 rounded-2xl border border-sidebar-border/70 bg-background/70 px-3 py-3 shadow-sm">
+              <UserButton user={user ?? null} />
+              <span className="flex-1 truncate text-sm text-sidebar-foreground">
+                {user?.email}
+              </span>
+            </div>
+          </div>
+        </>
+      )}
       {selectedChatId && (
         <DeleteChatModal
           chatId={selectedChatId}
@@ -324,9 +341,15 @@ function SidebarPanel({ user, chats = [] }: ChatSidebarProps) {
 }
 
 const ChatSidebar = (props: ChatSidebarProps) => {
+  const { isCollapsed = false } = props;
   return (
     <>
-      <aside className="hidden h-full w-[18rem] shrink-0 border-r border-border/60 bg-sidebar/90 backdrop-blur-xl md:flex">
+      <aside
+        className={cn(
+          "hidden h-full shrink-0 border-r border-border/60 bg-sidebar/90 backdrop-blur-xl transition-[width] duration-300 ease-out md:flex",
+          isCollapsed ? "w-[4.5rem]" : "w-[15rem] lg:w-[15.5rem] xl:w-[16rem]",
+        )}
+      >
         <SidebarPanel {...props} />
       </aside>
 
@@ -339,7 +362,7 @@ const ChatSidebar = (props: ChatSidebarProps) => {
             <MenuIcon className="h-5 w-5" />
           </DrawerTrigger>
           <DrawerContent
-            className="w-[88vw] max-w-sm border-r-0 p-0"
+            className="w-[84vw] max-w-sm border-r-0 p-0"
           >
             <SidebarPanel {...props} />
           </DrawerContent>

@@ -31,20 +31,20 @@ const ChatMessageView = ({ user }: ChatMessageViewProps) => {
       </div>
 
       <motion.div
-        className="relative mx-auto flex w-full max-w-6xl flex-col gap-6"
+        className="relative mx-auto flex w-full max-w-5xl flex-col gap-5 lg:max-w-5xl xl:max-w-6xl"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.24, ease: "easeOut" }}
       >
-        <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+        <div className="grid gap-6 2xl:grid-cols-[1.05fr_0.95fr] 2xl:items-center">
           <div className="space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/70 px-3 py-1 text-xs font-medium uppercase tracking-[0.24em] text-muted-foreground shadow-sm backdrop-blur">
               AI workspace
             </div>
-            <h1 className="max-w-2xl text-4xl font-semibold tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+            <h1 className="max-w-2xl text-3xl font-semibold tracking-tight text-foreground sm:text-4xl 2xl:text-5xl">
               How can I help you, {displayName}?
             </h1>
-            <p className="max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">
+            <p className="max-w-xl text-sm leading-6 text-muted-foreground sm:text-base sm:leading-7">
               Start with a suggestion or type your own prompt. The interface is built to stay readable, fast, and comfortable on every screen.
             </p>
             <div className="flex flex-wrap gap-2">
@@ -59,7 +59,7 @@ const ChatMessageView = ({ user }: ChatMessageViewProps) => {
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-border/70 bg-background/75 p-4 shadow-2xl backdrop-blur-xl sm:p-6">
+          <div className="rounded-[2rem] border border-border/70 bg-background/75 p-4 shadow-2xl backdrop-blur-xl sm:p-5 lg:p-6">
             <ChatWelcomeTabs
               userName={user?.name ?? undefined}
               onMessageSelect={handleMessageSelect}
