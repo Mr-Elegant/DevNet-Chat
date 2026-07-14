@@ -1,4 +1,4 @@
-import { convertToModelMessages, streamText, tool } from "ai";
+import { convertToModelMessages, streamText, tool , createIdGenerator, type UIMessage} from "ai";
 import { CHAT_SYSTEM_PROMPT } from "@/lib/prompt";
 import { prisma } from "@/lib/db";
 import { MessageRole } from "@/lib/generated/prisma/enums";
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
     // The client sends the chat id, the latest message batch, and the selected model.
     const {
       chatId,
-      messages: newMessages,
+      messages,
       model,
       skipUserMessage,
     } = await req.json();
@@ -77,31 +77,26 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    // Rebuild the conversation in UI format, then append the new client messages.
-    const previousUI = dbMessages.map(dbMessageToUI).filter(Boolean);
-    const newUI = Array.isArray(newMessages) ? newMessages : [newMessages];
-    const allMessages = [...previousUI, ...newUI];
 
-    // Convert the UI message list to the AI model's message format for streaming.
-    let modelMessages = await convertToModelMessages(allMessages);
 
     const result = streamText({
       model: openRouter.chat(model),
       system: CHAT_SYSTEM_PROMPT,
-      messages: modelMessages,
+      messages: await convertToModelMessages(messages),
     });
+    result.consumeStream();
 
     // Stream the response to the client and persist both sides once generation finishes.
     return result.toUIMessageStreamResponse({
       sendReasoning: true,
-      originalMessages: allMessages,
+      originalMessages: messages,
       onFinish: async ({ responseMessage }) => {
         try {
           const messageToSave = [];
           if (!skipUserMessage) {
             // Save the last user message unless the caller already stored it.
-            const lastUserMsg = newUI[newUI.length - 1];
-            if (lastUserMsg?.role === "user") {
+            const lastUserMsg = [...messages].reverse().find((m)=> m.role === "user");
+            if (lastUserMsg) {
               messageToSave.push({
                 chatId,
                 content: partsToJSON(lastUserMsg),
@@ -124,7 +119,7 @@ export async function POST(req: NextRequest) {
           }
 
           if(messageToSave.length > 0) {
-            await prisma.message.createMany({data: messageToSave})
+            await prisma.message.createMany({data: messageToSave, skipDuplicates: true});
           }
         } catch (error) {
             console.error("Error saving messages", error)

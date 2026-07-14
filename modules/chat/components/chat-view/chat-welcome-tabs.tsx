@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState } from 'react';
+import { useState } from "react";
 import { Sparkles, Newspaper, Code, GraduationCap} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -49,9 +49,17 @@ const CHAT_TAB_MESSAGE = [
   },
 ];
 
-const ChatWelcomeTabs = ({ userName = "Preet Karwal", onMessageSelect }) => {
+type ChatWelcomeTabsProps = {
+  userName?: string;
+  onMessageSelect: (message: string) => void;
+};
 
-    const [activeTab, setActiveTab] = useState(0);
+const ChatWelcomeTabs = ({
+  userName = "Preet Karwal",
+  onMessageSelect,
+}: ChatWelcomeTabsProps) => {
+
+  const [activeTab, setActiveTab] = useState(0);
 
   return (
     <div className="flex flex-col items-center justify-center px-4">
@@ -64,6 +72,7 @@ const ChatWelcomeTabs = ({ userName = "Preet Karwal", onMessageSelect }) => {
           {CHAT_TAB_MESSAGE.map((tab, index) => (
             <Button
               key={tab.tabName}
+              type="button"
               variant={activeTab === index ? "default" : "secondary"}
               onClick={() => setActiveTab(index)}
               className="w-[110px] justify-start"
@@ -78,6 +87,7 @@ const ChatWelcomeTabs = ({ userName = "Preet Karwal", onMessageSelect }) => {
           {CHAT_TAB_MESSAGE[activeTab].messages.map((message, index) => (
             <div key={index}>
               <button
+                type="button"
                 onClick={() => onMessageSelect(message)}
                 className="w-full text-left text-sm text-muted-foreground hover:text-primary transition-colors duration-300 ease-in-out py-2"
               >
