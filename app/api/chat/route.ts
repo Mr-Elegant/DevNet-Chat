@@ -2,6 +2,7 @@ import { convertToModelMessages, streamText, tool , createIdGenerator, type UIMe
 import { CHAT_SYSTEM_PROMPT } from "@/lib/prompt";
 import { prisma } from "@/lib/db";
 import { MessageRole } from "@/lib/generated/prisma/enums";
+import type { Prisma } from "@/lib/generated/prisma/client";
 import { createOpenRouter } from "@openrouter/ai-sdk-provider";
 import { NextRequest } from "next/server";
 
@@ -9,13 +10,31 @@ const openRouter = createOpenRouter({
   apiKey: process.env.OPENROUTER_API_KEY!,
 });
 
+type MessagePart = {
+  type: string;
+  text?: string;
+};
+
+type StoredMessage = {
+  id: string;
+  content: string;
+  messageRole: { toLowerCase: () => string };
+  createdAt: Date;
+};
+
+type StreamMessage = {
+  role: string;
+  parts: MessagePart[];
+  content?: string;
+};
+
 // Convert a stored DB message into the UIMessage shape expected by the AI SDK.
-function dbMessageToUI(msg) {
+function dbMessageToUI(msg: StoredMessage) {
   try {
-    const parts = JSON.parse(msg.content);
+    const parts = JSON.parse(msg.content) as MessagePart[];
 
     // Only forward text parts here; the stream can safely ignore non-text DB payloads.
-    const textParts = parts.filter((part) => {
+    const textParts = parts.filter((part: MessagePart) => {
       return part.type === "text";
     });
     if (textParts.length === 0) {
@@ -39,7 +58,7 @@ function dbMessageToUI(msg) {
 }
 
 // Persist AI SDK message parts as JSON so we can reconstruct them later.
-function partsToJSON(message) {
+function partsToJSON(message: { parts?: MessagePart[]; content?: string }) {
   if (Array.isArray(message.parts)) {
     return JSON.stringify(message.parts);
   }
@@ -47,16 +66,16 @@ function partsToJSON(message) {
 }
 
 // Fallback when AI SDK conversion fails or the incoming message shape is partial.
-function fallbackConversion(message) {
+function fallbackConversion(message: StreamMessage[]) {
   return message
-    .map((msg) => ({
+    .map((msg: StreamMessage) => ({
       role: msg.role,
       content: msg.parts
-        .filter((p) => p.type === "text")
-        .map((p) => p.text)
+        .filter((p: MessagePart) => p.type === "text")
+        .map((p: MessagePart) => p.text)
         .join("\n"),
     }))
-    .filter((m) => m.content);
+    .filter((m: { content: string }) => m.content);
 }
 
 export async function POST(req: NextRequest) {
@@ -92,10 +111,10 @@ export async function POST(req: NextRequest) {
       originalMessages: messages,
       onFinish: async ({ responseMessage }) => {
         try {
-          const messageToSave = [];
+          const messageToSave: Prisma.MessageCreateManyInput[] = [];
           if (!skipUserMessage) {
             // Save the last user message unless the caller already stored it.
-            const lastUserMsg = [...messages].reverse().find((m)=> m.role === "user");
+            const lastUserMsg = [...messages].reverse().find((m: UIMessage) => m.role === "user");
             if (lastUserMsg) {
               messageToSave.push({
                 chatId,

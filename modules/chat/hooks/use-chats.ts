@@ -61,23 +61,28 @@ export const useDeleteChat = (chatId: string) => {
   const queryClient = useQueryClient();
   const router = useRouter();
 
-  return useMutation<ActionResponse<unknown>, Error>({
+  return useMutation<
+    ActionResponse<unknown>,
+    Error,
+    void,
+    { previousChats?: ActionResponse<ChatLike[]> }
+  >({
     mutationFn: () => deleteChat(chatId),
     onMutate: async () => {
       await queryClient.cancelQueries({ queryKey: ["chats"] });
 
-      const previousChats = queryClient.getQueryData<ActionResponse<unknown[]>>([
+      const previousChats = queryClient.getQueryData<ActionResponse<ChatLike[]>>([
         "chats",
       ]);
 
-      queryClient.setQueryData<ActionResponse<unknown[]>>(["chats"], (old) => {
+      queryClient.setQueryData<ActionResponse<ChatLike[]>>(["chats"], (old) => {
         if (!old?.success || !Array.isArray(old.data)) {
           return old;
         }
 
         return {
           ...old,
-          data: old.data.filter((chat: { id?: string }) => chat.id !== chatId),
+          data: old.data.filter((chat) => chat.id !== chatId),
         };
       });
 

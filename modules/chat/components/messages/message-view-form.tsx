@@ -13,6 +13,7 @@ import {
   PromptInputBody,
   PromptInputFooter,
   PromptInputSubmit,
+  PromptInputMessage,
   PromptInputTextarea,
   PromptInputTools,
 } from "@/components/ai-elements/prompt-input";
@@ -35,29 +36,46 @@ import {
 } from "@/components/ai-elements/reasoning";
 import { toast } from "sonner";
 
-function parseMessageToUI(msg) {
-  const basePart = { type: "text", text: msg.content };
+type StoredChatMessage = {
+  id: string;
+  content: string;
+  messageRole: string;
+  createdAt: string | Date;
+};
+
+type MessagePartShape = UIMessage["parts"][number];
+
+function parseMessageToUI(msg: StoredChatMessage): UIMessage {
+  const basePart = { type: "text", text: msg.content } as UIMessage["parts"][number];
 
   try {
-    const parts = JSON.parse(msg.content);
+    const parts = JSON.parse(msg.content) as MessagePartShape[];
 
     return {
       id: msg.id,
-      role: msg.messageRole.toLowerCase(),
-      parts: Array.isArray(parts) ? parts : [basePart],
-      createdAt: msg.createdAt,
+      role: msg.messageRole.toLowerCase() as UIMessage["role"],
+      parts: (Array.isArray(parts) ? parts : [basePart]) as UIMessage["parts"],
     };
   } catch {
     return {
       id: msg.id,
-      role: msg.messageRole.toLowerCase(),
-      parts: [basePart],
-      createdAt: msg.createdAt,
+      role: msg.messageRole.toLowerCase() as UIMessage["role"],
+      parts: [basePart] as UIMessage["parts"],
     };
   }
 }
 
-function MessagePart({ part, messageId, partIndex, role }: {oart: MessagePartShape, messageId: string, partIndex: number, role: UIMessage["role"], isStreaming: boolean}) {
+function MessagePart({
+  part,
+  messageId,
+  partIndex,
+  role,
+}: {
+  part: MessagePartShape;
+  messageId: string;
+  partIndex: number;
+  role: UIMessage["role"];
+}) {
   const key = `${messageId}-${partIndex}`;
 
   if (part.type === "text") {
@@ -115,8 +133,10 @@ const MessageViewWithForm = ({ chatId }: { chatId: string }) => {
     )
   }
 
-  const rawMessages = (chatData.data.messages ?? [])
-  const initialMessages: UIMessage[] = rawMessages.filter((m)=> m?.id && m?.content?.trim()).map(parseMessageToUI);
+  const rawMessages = (chatData.data.messages ?? []) as StoredChatMessage[];
+  const initialMessages: UIMessage[] = rawMessages
+    .filter((m) => m?.id && m?.content?.trim())
+    .map(parseMessageToUI);
 
   return (
     <ChatView chatId={chatId} initialMessages={initialMessages} initialModel={chatData.data.model} />
@@ -257,9 +277,6 @@ const ChatView = ({chatId, initialMessages, initialModel}: {chatId: string, init
                         messageId={message.id}
                         partIndex={i}
                         role={message.role}
-                        isStreaming={
-                          isBuzy && messages.at(-1) && i === message.parts.length - 1
-                        }
                       />
                     ))}
                   </Fragment>
@@ -299,7 +316,7 @@ const ChatView = ({chatId, initialMessages, initialModel}: {chatId: string, init
                 ) : (
                   <ModelSelector
                     models={modelsData?.models ?? []}
-                    selectedModelId={selectedModel}
+                    selectedModelId={selectedModel ?? undefined}
                     onModelSelect={setSelectedModel}
                     className=""
                   />

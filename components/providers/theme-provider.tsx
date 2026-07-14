@@ -91,14 +91,14 @@ export function ThemeProvider({
 }) {
   const theme = React.useSyncExternalStore(
     subscribe,
-    () => getStoredTheme(defaultTheme),
-    () => defaultTheme,
+    (): Theme => getStoredTheme(defaultTheme),
+    (): Theme => defaultTheme,
   );
 
   const resolvedTheme = React.useSyncExternalStore(
     subscribe,
-    () => getResolvedTheme(getStoredTheme(defaultTheme)),
-    () => "light",
+    (): ResolvedTheme => getResolvedTheme(getStoredTheme(defaultTheme)),
+    (): ResolvedTheme => "light",
   );
 
   React.useEffect(() => {

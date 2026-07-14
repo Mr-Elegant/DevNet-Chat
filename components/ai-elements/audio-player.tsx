@@ -106,7 +106,17 @@ export const AudioPlayerPlayButton = ({
   className,
   ...props
 }: AudioPlayerPlayButtonProps) => (
-  <Button size="icon-sm" variant="outline" render={<MediaPlayButton className={cn("bg-transparent", className)} data-slot="audio-player-play-button" {...props} />}></Button>
+  <Button
+    render={(
+      <MediaPlayButton
+        className={cn("bg-transparent", className)}
+        data-slot="audio-player-play-button"
+        {...props}
+      /> as any
+    )}
+    size="icon-sm"
+    variant="outline"
+  />
 );
 
 export type AudioPlayerSeekBackwardButtonProps = ComponentProps<
@@ -117,7 +127,17 @@ export const AudioPlayerSeekBackwardButton = ({
   seekOffset = 10,
   ...props
 }: AudioPlayerSeekBackwardButtonProps) => (
-  <Button size="icon-sm" variant="outline" render={<MediaSeekBackwardButton data-slot="audio-player-seek-backward-button" seekOffset={seekOffset} {...props} />}></Button>
+  <Button
+    render={(
+      <MediaSeekBackwardButton
+        data-slot="audio-player-seek-backward-button"
+        seekOffset={seekOffset}
+        {...props}
+      /> as any
+    )}
+    size="icon-sm"
+    variant="outline"
+  />
 );
 
 export type AudioPlayerSeekForwardButtonProps = ComponentProps<
@@ -128,7 +148,17 @@ export const AudioPlayerSeekForwardButton = ({
   seekOffset = 10,
   ...props
 }: AudioPlayerSeekForwardButtonProps) => (
-  <Button size="icon-sm" variant="outline" render={<MediaSeekForwardButton data-slot="audio-player-seek-forward-button" seekOffset={seekOffset} {...props} />}></Button>
+  <Button
+    render={(
+      <MediaSeekForwardButton
+        data-slot="audio-player-seek-forward-button"
+        seekOffset={seekOffset}
+        {...props}
+      /> as any
+    )}
+    size="icon-sm"
+    variant="outline"
+  />
 );
 
 export type AudioPlayerTimeDisplayProps = ComponentProps<
@@ -139,7 +169,16 @@ export const AudioPlayerTimeDisplay = ({
   className,
   ...props
 }: AudioPlayerTimeDisplayProps) => (
-  <ButtonGroupText className="bg-transparent" render={<MediaTimeDisplay className={cn("tabular-nums", className)} data-slot="audio-player-time-display" {...props} />}></ButtonGroupText>
+  <ButtonGroupText
+    render={(
+      <MediaTimeDisplay
+        className={cn("tabular-nums", className)}
+        data-slot="audio-player-time-display"
+        {...props}
+      /> as any
+    )}
+    className="bg-transparent"
+  />
 );
 
 export type AudioPlayerTimeRangeProps = ComponentProps<typeof MediaTimeRange>;
@@ -148,7 +187,16 @@ export const AudioPlayerTimeRange = ({
   className,
   ...props
 }: AudioPlayerTimeRangeProps) => (
-  <ButtonGroupText className="bg-transparent" render={<MediaTimeRange className={cn("", className)} data-slot="audio-player-time-range" {...props} />}></ButtonGroupText>
+  <ButtonGroupText
+    render={(
+      <MediaTimeRange
+        className={cn("", className)}
+        data-slot="audio-player-time-range"
+        {...props}
+      /> as any
+    )}
+    className="bg-transparent"
+  />
 );
 
 export type AudioPlayerDurationDisplayProps = ComponentProps<
@@ -159,7 +207,16 @@ export const AudioPlayerDurationDisplay = ({
   className,
   ...props
 }: AudioPlayerDurationDisplayProps) => (
-  <ButtonGroupText className="bg-transparent" render={<MediaDurationDisplay className={cn("tabular-nums", className)} data-slot="audio-player-duration-display" {...props} />}></ButtonGroupText>
+  <ButtonGroupText
+    render={(
+      <MediaDurationDisplay
+        className={cn("tabular-nums", className)}
+        data-slot="audio-player-duration-display"
+        {...props}
+      /> as any
+    )}
+    className="bg-transparent"
+  />
 );
 
 export type AudioPlayerMuteButtonProps = ComponentProps<typeof MediaMuteButton>;
@@ -168,7 +225,16 @@ export const AudioPlayerMuteButton = ({
   className,
   ...props
 }: AudioPlayerMuteButtonProps) => (
-  <ButtonGroupText className="bg-transparent" render={<MediaMuteButton className={cn("", className)} data-slot="audio-player-mute-button" {...props} />}></ButtonGroupText>
+  <ButtonGroupText
+    render={(
+      <MediaMuteButton
+        className={cn("", className)}
+        data-slot="audio-player-mute-button"
+        {...props}
+      /> as any
+    )}
+    className="bg-transparent"
+  />
 );
 
 export type AudioPlayerVolumeRangeProps = ComponentProps<
@@ -179,5 +245,14 @@ export const AudioPlayerVolumeRange = ({
   className,
   ...props
 }: AudioPlayerVolumeRangeProps) => (
-  <ButtonGroupText className="bg-transparent" render={<MediaVolumeRange className={cn("", className)} data-slot="audio-player-volume-range" {...props} />}></ButtonGroupText>
+  <ButtonGroupText
+    render={(
+      <MediaVolumeRange
+        className={cn("", className)}
+        data-slot="audio-player-volume-range"
+        {...props}
+      /> as any
+    )}
+    className="bg-transparent"
+  />
 );

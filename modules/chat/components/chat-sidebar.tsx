@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import UserButton from "@/modules/authentication/components/user-button";
+import type { CurrentUser } from "@/modules/authentication/actions";
 import { cn } from "@/lib/utils";
 import DeleteChatModal from "@/components/delete-chat-modal";
 
@@ -45,9 +46,7 @@ type ChatGroups = {
 };
 
 type ChatSidebarProps = {
-  user?: {
-    email?: string | null;
-  } | null;
+  user?: CurrentUser | null;
   chats?: Chat[];
 };
 
@@ -306,7 +305,7 @@ function SidebarPanel({ user, chats = [] }: ChatSidebarProps) {
 
       <div className="border-t border-sidebar-border/70 p-4">
         <div className="flex items-center gap-3 rounded-2xl border border-sidebar-border/70 bg-background/70 px-3 py-3 shadow-sm">
-          <UserButton user={user} />
+          <UserButton user={user ?? null} />
           <span className="flex-1 truncate text-sm text-sidebar-foreground">
             {user?.email}
           </span>
@@ -332,7 +331,7 @@ const ChatSidebar = (props: ChatSidebarProps) => {
       </aside>
 
       <div className="md:hidden">
-        <Drawer>
+        <Drawer swipeDirection="left">
           <DrawerTrigger
             aria-label="Open sidebar"
             className="fixed left-3 top-3 z-40 inline-flex h-11 w-11 items-center justify-center rounded-full border border-border/70 bg-background/85 text-foreground shadow-lg backdrop-blur-xl"
@@ -340,8 +339,6 @@ const ChatSidebar = (props: ChatSidebarProps) => {
             <MenuIcon className="h-5 w-5" />
           </DrawerTrigger>
           <DrawerContent
-            side="left"
-            showCloseButton={false}
             className="w-[88vw] max-w-sm border-r-0 p-0"
           >
             <SidebarPanel {...props} />

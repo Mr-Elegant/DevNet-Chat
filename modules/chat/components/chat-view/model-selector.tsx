@@ -20,22 +20,37 @@ import { Separator } from "@/components/ui/separator";
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 
-const ModelSelector = ({ models, selectedModelId, onModelSelect, className }) => {
+type ModelSelectorProps = {
+  models?: any[];
+  selectedModelId?: string;
+  onModelSelect: (modelId: string) => void;
+  className?: string;
+};
+
+const ModelSelector = ({
+  models,
+  selectedModelId,
+  onModelSelect,
+  className,
+}: ModelSelectorProps) => {
   const [open, setOpen] = useState(false);
   const [detailsOpen, setDetailsOpen] = useState(false);
-  const [selectedForDetails, setSelectedForDetails] = useState(null);
+  const [selectedForDetails, setSelectedForDetails] = useState<any>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
   const modelList = Array.isArray(models) ? models : [];
   const selectedModel = modelList.find((model) => model.id === selectedModelId);
 
-  const formatContextLength = (length) => {
+  const formatContextLength = (length: number | null | undefined) => {
+    if (length == null) {
+      return "0";
+    }
     if (length >= 1000000) return `${(length / 1000000).toFixed(1)}M`;
     if (length >= 1000) return `${(length / 1000).toFixed(0)}K`;
-    return String(length ?? 0);
+    return String(length);
   };
 
-  const isFreeModel = (model) => {
+  const isFreeModel = (model: any) => {
     return (
       model?.pricing?.prompt === "0" &&
       model?.pricing?.completion === "0" &&
@@ -43,13 +58,13 @@ const ModelSelector = ({ models, selectedModelId, onModelSelect, className }) =>
     );
   };
 
-  const openModelDetails = (model, e) => {
+  const openModelDetails = (model: any, e: any) => {
     e.stopPropagation();
     setSelectedForDetails(model);
     setDetailsOpen(true);
   };
 
-  const filteredModels = modelList.filter((model) => {
+  const filteredModels = modelList.filter((model: any) => {
     const query = searchQuery.toLowerCase();
     const name = model.name || "";
     const description = model.description || "";
@@ -237,7 +252,7 @@ const ModelSelector = ({ models, selectedModelId, onModelSelect, className }) =>
                       <p className="text-xs text-muted-foreground">Input Modalities</p>
                       <div className="flex flex-wrap gap-1">
                         {(selectedForDetails.architecture?.input_modalities || []).map(
-                          (modality) => (
+                          (modality: string) => (
                             <Badge key={modality} variant="outline" className="text-xs">
                               {modality}
                             </Badge>
@@ -249,7 +264,7 @@ const ModelSelector = ({ models, selectedModelId, onModelSelect, className }) =>
                       <p className="text-xs text-muted-foreground">Output Modalities</p>
                       <div className="flex flex-wrap gap-1">
                         {(selectedForDetails.architecture?.output_modalities || []).map(
-                          (modality) => (
+                          (modality: string) => (
                             <Badge key={modality} variant="outline" className="text-xs">
                               {modality}
                             </Badge>
@@ -275,7 +290,7 @@ const ModelSelector = ({ models, selectedModelId, onModelSelect, className }) =>
                     </div>
                   ) : (
                     <div className="grid grid-cols-2 gap-3">
-                      {Object.entries(selectedForDetails.pricing || {}).map(([key, value]) => {
+                      {Object.entries(selectedForDetails.pricing || {}).map(([key, value]: [string, any]) => {
                         if (value === "0") return null;
 
                         return (

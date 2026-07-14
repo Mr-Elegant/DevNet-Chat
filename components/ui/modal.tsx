@@ -1,4 +1,4 @@
-import React from "react"
+import type { ReactNode } from "react"
 import { motion } from "motion/react"
 import {
   Dialog,
@@ -10,22 +10,35 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from '@/components/ui/button'
 
+type ModalProps = {
+  children?: ReactNode;
+  title: ReactNode;
+  description?: ReactNode;
+  isOpen: boolean;
+  onClose: () => void;
+  onSubmit?: () => void | Promise<void>;
+  submitText?: ReactNode;
+  cancelText?: ReactNode;
+  showFooter?: boolean;
+  submitVariant?: "default" | "destructive" | "outline" | "secondary" | "ghost";
+  size?: string;
+  className?: string;
+};
 
-
-const Modal= ({
+const Modal = ({
   children,
   title,
   description,
   isOpen,
   onClose,
   onSubmit,
-  submitText = 'Submit',
-  cancelText = 'Cancel',
+  submitText = "Submit",
+  cancelText = "Cancel",
   showFooter = true,
   submitVariant = "default",
-  size,
-  className = ''
-}) => {
+  size = "",
+  className = "",
+}: ModalProps) => {
   const handleSubmit = () => {
     if (onSubmit) {
       onSubmit()

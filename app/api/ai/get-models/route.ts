@@ -1,5 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 
+type OpenRouterModel = {
+  id: string;
+  name: string;
+  description?: string;
+  context_length?: number;
+  architecture?: unknown;
+  pricing?: {
+    prompt?: string;
+    completionPrice?: string;
+  };
+  top_provider?: unknown;
+};
+
 export async function GET(request: NextRequest) {
     try {
         const response = await fetch("https://openrouter.ai/api/v1/models", {
@@ -14,9 +27,9 @@ export async function GET(request: NextRequest) {
             return NextResponse.json({message: "Openrouter api error"}, {status: 500})
         }
 
-        const data = await response.json();
+        const data: { data: OpenRouterModel[] } = await response.json();
 
-        const freeModels = data.data.filter(model => {
+        const freeModels = data.data.filter((model) => {
             const promptPrice = parseFloat(model.pricing?.prompt || "0");
             const completionPrice = parseFloat(model.pricing?.completionPrice || "0");
             return promptPrice === 0 && completionPrice === 0;

@@ -61,7 +61,7 @@ const ChatMessageView = ({ user }: ChatMessageViewProps) => {
 
           <div className="rounded-[2rem] border border-border/70 bg-background/75 p-4 shadow-2xl backdrop-blur-xl sm:p-6">
             <ChatWelcomeTabs
-              userName={user?.name}
+              userName={user?.name ?? undefined}
               onMessageSelect={handleMessageSelect}
             />
             <div className="mt-6">
