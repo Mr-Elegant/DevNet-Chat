@@ -1,5 +1,7 @@
 # DevNet Chat
 
+![DevNet Chat Banner](./public/thumbnail.png)
+
 DevNet Chat is a modern AI chat workspace built with Next.js, Better Auth, Prisma, and the AI SDK. It gives users a polished place to sign in, create chats, continue old threads, and manage conversations from a responsive sidebar and message composer.
 
 ## What This App Does
